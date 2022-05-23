@@ -1,0 +1,164 @@
+
+#----------------------------#
+#	スタック保管
+#----------------------------#
+
+lis r2,0x1602
+mflr r0
+stw r0,0(r2)
+
+#----------------------------#
+#	最初だけいるもの
+#----------------------------#
+
+li r3,1
+lis r12,0x310
+ori r12,r12,0x3064
+mtctr r12
+bctrl
+lis r12,0x310
+ori r12,r12,0x3080
+mtctr r12
+bctrl
+lis r12,0
+stw r12,0x20(r2)
+lfs f1,0x20(r2)
+lis r12,0x43E0
+stw r12,0x20(r2)
+lfs f2,0x20(r2)
+lis r12,0x4374
+stw r12,0x20(r2)
+lfs f3,0x20(r2)
+lis r12,0x453B
+stw r12,0x20(r2)
+lfs f6,0x20(r2)
+lis r12,0x311
+ori r12,r12,0xD4C
+mtctr r12
+bctrl
+li r3,0
+lis r12,0x310
+ori r12,r12,0x3064
+mtctr r12
+bctrl
+lis r12,0x310
+ori r12,r12,0x3080
+mtctr r12
+bctrl
+lis r12,0x30F
+ori r12,r12,0x974C
+mtctr r12
+bctrl
+lis r12,0x30E
+ori r12,r12,0x4B24
+mtctr r12
+bctrl
+lis r12,0x30E
+ori r12,r12,0x9B9C
+mtctr r12
+bctrl
+lis r12,0x30E
+ori r12,r12,0x5284
+mtctr r12
+bctrl
+li r3,4
+li r4,5
+lis r12,0x30E
+ori r12,r12,0x52A0
+mtctr r12
+bctrl
+
+# 文字を増やす場合はここから複製する
+
+#----------------------------#
+#	文字を保管する
+#----------------------------#
+
+bl swprintf_1
+# HelloWorld
+.long 0x00A70066
+.long 0x00480065
+.long 0x006C006C
+.long 0x006F0020
+.long 0x0057006F
+.long 0x0072006C
+.long 0x00640021
+.long 0
+swprintf_1:
+mflr r5
+addi r3,r2,0x30 # ここは同じにする(増やす場合は30ほど空ける)
+li r4,0x64
+crset 4*cr1+eq
+lis r12,0x382
+ori r12,r12,0xC8C0
+mtctr r12
+bctrl
+
+#----------------------------#
+#   描画スタート
+#----------------------------#
+
+lis r12,0x30E
+ori r12,r12,0x4B3C
+mtctr r12
+bctrl
+
+lis r12,0x40A0 # 大きさ
+stw r12,0x20(r2)
+lfs f1,0x20(r2)
+lfs f2,0x20(r2)
+lis r12,0x30E
+ori r12,r12,0x4B6C
+mtctr r12
+bctrl
+# scale
+
+lis r12,0x41A0 # 横
+stw r12,0x20(r2)
+lfs f1,0x20(r2)
+lis r12,0x41A0 # 縦
+stw r12,0x20(r2)
+lfs f2,0x20(r2)
+lis r12,0x30E
+ori r12,r12,0x4B54
+mtctr r12
+bctrl
+# translatef(float, float, float)
+
+addi r3,r2,0x50
+addi r4,r2,0x30 # ここは同じにする(増やす場合は30ほど空ける)
+lis r12,0x20B
+ori r12,r12,0x8D4
+mtctr r12
+bctrl
+# std::basic_string
+
+lis r3,0x109D
+lwz r3,-0x271C(r3)
+lwz r3,0x104(r3)
+addi r4,r2,0x50
+li r5,0
+li r6,0
+li r7,0
+lis r12,0x312
+ori r12,r12,0x6B88
+mtctr r12
+bctrl
+# Font::drawshadow
+
+lis r12,0x30E
+ori r12,r12,0x4BD8
+mtctr r12
+bctrl
+# popMatrix(void)
+
+# 文字を増やす場合はここまで複製する
+
+#----------------------------#
+#	スタックロード
+#----------------------------#
+
+END:
+lwz r0,0(r2)
+mtlr r0
+blr
