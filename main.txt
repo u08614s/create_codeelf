@@ -68,15 +68,18 @@ ori r12,r12,0x52A0
 mtctr r12
 bctrl
 
+
 # 文字を増やす場合はここから複製する
-
 #----------------------------#
-#	文字を保管する
+#   描画スタート
 #----------------------------#
 
-bl swprintf_1
-# HelloWorld
+bl swprintf_1 # 増やす場合は名前を変える
+
+# 文字色(§f) 消さないでください
 .long 0x00A70066
+
+# HelloWorld
 .long 0x00480065
 .long 0x006C006C
 .long 0x006F0020
@@ -84,25 +87,19 @@ bl swprintf_1
 .long 0x0072006C
 .long 0x00640021
 .long 0
-swprintf_1:
+swprintf_1: # 増やす場合は名前を変える
 mflr r5
-addi r3,r2,0x30 # ここは同じにする(増やす場合は30ほど空ける)
+addi r3,r2,0x30
 li r4,0x64
 crset 4*cr1+eq
 lis r12,0x382
 ori r12,r12,0xC8C0
 mtctr r12
 bctrl
-
-#----------------------------#
-#   描画スタート
-#----------------------------#
-
 lis r12,0x30E
 ori r12,r12,0x4B3C
 mtctr r12
 bctrl
-
 lis r12,0x40A0 # 大きさ
 stw r12,0x20(r2)
 lfs f1,0x20(r2)
@@ -111,32 +108,26 @@ lis r12,0x30E
 ori r12,r12,0x4B6C
 mtctr r12
 bctrl
-# scale
-
-lis r12,0x41A0 # 横
+lis r12,0x41A0 # 横(左)
 stw r12,0x20(r2)
 lfs f1,0x20(r2)
-lis r12,0x41A0 # 縦
+lis r12,0x41A0 # 縦(下)
 stw r12,0x20(r2)
 lfs f2,0x20(r2)
 lis r12,0x30E
 ori r12,r12,0x4B54
 mtctr r12
 bctrl
-# translatef(float, float, float)
-
-addi r3,r2,0x50
-addi r4,r2,0x30 # ここは同じにする(増やす場合は30ほど空ける)
+li r3,0
+addi r4,r2,0x30
 lis r12,0x20B
 ori r12,r12,0x8D4
 mtctr r12
 bctrl
-# std::basic_string
-
+mr r4,r3
 lis r3,0x109D
 lwz r3,-0x271C(r3)
 lwz r3,0x104(r3)
-addi r4,r2,0x50
 li r5,0
 li r6,0
 li r7,0
@@ -144,15 +135,83 @@ lis r12,0x312
 ori r12,r12,0x6B88
 mtctr r12
 bctrl
-# Font::drawshadow
-
 lis r12,0x30E
 ori r12,r12,0x4BD8
 mtctr r12
 bctrl
-# popMatrix(void)
-
 # 文字を増やす場合はここまで複製する
+
+
+# 文字を増やす場合はここから複製する
+#----------------------------#
+#   描画スタート(2)
+#----------------------------#
+
+bl swprintf_2 # 増やす場合は名前を変える
+
+# 文字色(§B) 消さないでください
+.long 0x00A70042
+
+# SubTitle
+.long 0x00530075
+.long 0x00620054
+.long 0x00690074
+.long 0x006C0065
+.long 0
+swprintf_2: # 増やす場合は名前を変える
+mflr r5
+addi r3,r2,0x30
+li r4,0x64
+crset 4*cr1+eq
+lis r12,0x382
+ori r12,r12,0xC8C0
+mtctr r12
+bctrl
+lis r12,0x30E
+ori r12,r12,0x4B3C
+mtctr r12
+bctrl
+lis r12,0x4000 # 大きさ
+stw r12,0x20(r2)
+lfs f1,0x20(r2)
+lfs f2,0x20(r2)
+lis r12,0x30E
+ori r12,r12,0x4B6C
+mtctr r12
+bctrl
+lis r12,0x42C0 # 横(左)
+stw r12,0x20(r2)
+lfs f1,0x20(r2)
+lis r12,0x4290 # 縦(下)
+stw r12,0x20(r2)
+lfs f2,0x20(r2)
+lis r12,0x30E
+ori r12,r12,0x4B54
+mtctr r12
+bctrl
+li r3,0
+addi r4,r2,0x30
+lis r12,0x20B
+ori r12,r12,0x8D4
+mtctr r12
+bctrl
+mr r4,r3
+lis r3,0x109D
+lwz r3,-0x271C(r3)
+lwz r3,0x104(r3)
+li r5,0
+li r6,0
+li r7,0
+lis r12,0x312
+ori r12,r12,0x6B88
+mtctr r12
+bctrl
+lis r12,0x30E
+ori r12,r12,0x4BD8
+mtctr r12
+bctrl
+# 文字を増やす場合はここまで複製する
+
 
 #----------------------------#
 #	スタックロード
